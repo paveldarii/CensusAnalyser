@@ -1,7 +1,8 @@
 import React from "react";
+import { Container } from "@mui/material";
 
 const PageContent = (props) => {
-  return <div>{props.children}</div>;
+  return <Container maxWidth="lg">{props.children}</Container>;
 };
 
 export default PageContent;
