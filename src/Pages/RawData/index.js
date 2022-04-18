@@ -10,10 +10,14 @@ import TableRow from "@mui/material/TableRow";
 
 const columnNames = ["Year", "US", "Canada", "UK", "Moldova"];
 const allData = [
-  [1, "test", "test", "test", "test"],
-  [2, "test", "test", "test", "test"],
-  [3, "test", "test", "test", "test"],
-  [4, "test", "test", "test", "test"],
+  ["1...150", "N/A", "N/A", "N/A", "N/A"],
+  [151, "test", "test", "test", "test"],
+  [152, "test", "test", "test", "test"],
+  [153, "test", "test", "test", "test"],
+  [151, "test", "test", "test", "test"],
+  [152, "test", "test", "test", "test"],
+  [153, "test", "test", "test", "test"],
+  [151, "test", "test", "test", "test"],
 ];
 const columns = columnNames.map((column) => {
   return {
@@ -24,11 +28,13 @@ const columns = columnNames.map((column) => {
   };
 });
 
-function createData(year, us, canada, uk, moldova) {
-  return { year, us, canada, uk, moldova };
+function createData(row) {
+  var result = {};
+  row.forEach((key, i) => (result[columnNames[i].toLowerCase()] = key));
+  return result;
 }
 const rows = allData.map((row) => {
-  return createData(...row);
+  return createData(row);
 });
 
 export default function RawData() {
