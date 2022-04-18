@@ -1,23 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Nav from "./Components/Nav";
+import Page from "./Components/Page";
 
 function App() {
+  const [pages] = useState([
+    {
+      name: "raw data",
+    },
+    { name: "analytics" },
+  ]);
+  const [currentPage, setCurrentPage] = useState(pages[0]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Nav
+        pages={pages}
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+      />
+      <Page currentPage={currentPage} />
     </div>
   );
 }
