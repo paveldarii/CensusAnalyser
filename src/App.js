@@ -6,8 +6,9 @@ function App() {
   const [pages] = useState([
     {
       name: "raw data",
+      value: 0,
     },
-    { name: "analytics" },
+    { name: "analytics", value: 1 },
   ]);
   const [currentPage, setCurrentPage] = useState(pages[0]);
   return (

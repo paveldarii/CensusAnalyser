@@ -5,8 +5,9 @@ function Nav({ pages, setCurrentPage, currentPage }) {
   useEffect(() => {
     document.title = currentPage.name;
   }, [currentPage]);
+
   return (
-    <Tabs value={currentPage} centered>
+    <Tabs value={currentPage.value} centered>
       {pages.map((page) => (
         <Tab
           onClick={() => setCurrentPage(page)}
