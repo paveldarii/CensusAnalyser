@@ -1,15 +1,17 @@
 import React from "react";
 import PageContent from "../PageContent";
+import Analytics from "../../Pages/Analytics";
+import RawData from "../../Pages/RawData";
 
 function Page({ currentPage }) {
   const renderPage = () => {
     switch (currentPage.name) {
       case "raw data":
-        return <p>Raw Data</p>;
+        return <RawData />;
       case "analytics":
-        return <p>Analytics</p>;
+        return <Analytics />;
       default:
-        return <p>Raw Data</p>;
+        return <RawData />;
     }
   };
 
