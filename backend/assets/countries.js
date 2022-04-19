@@ -169,8 +169,6 @@ const countries = [
   "Yemen",
   "Former Yugoslavia",
   "South Africa",
-  "Zambia",
-  "Zimbabwe",
 ];
 
 module.exports = countries;

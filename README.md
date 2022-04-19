@@ -2,7 +2,7 @@
 
 ## Deployed on Heroku
 
-### Since is cold load when using their service for free it might take some time to load in the beginning.
+### Since is cold load when using their service for free, it might take some time to load in the beginning.
 
 https://census-analytics.herokuapp.com/
 
