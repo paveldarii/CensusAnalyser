@@ -15,11 +15,12 @@ router.get("/", async (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.json({ data });
 });
+
 function formatData(censusData) {
   let returnData = [];
+  let localObj = {};
+  let localData = [];
   censusData.forEach((item, index) => {
-    let localObj = {};
-    let localData = [];
     if (index == 0) {
       localObj.name = censusData[0].name;
       localData.push([censusData[0].year, censusData[0].population]);
