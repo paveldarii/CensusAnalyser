@@ -1,5 +1,6 @@
 import * as React from "react";
 import ReactApexChart from "react-apexcharts";
+import axios from "axios";
 class ApexChart extends React.Component {
   constructor(props) {
     super(props);
@@ -138,7 +139,13 @@ class ApexChart extends React.Component {
       },
     };
   }
+  componentDidMount() {
+    axios.get("/api/census-data").then((res) => {
+      const series = res.data;
 
+      this.setState({ series });
+    });
+  }
   render() {
     return (
       <div id="chart">
