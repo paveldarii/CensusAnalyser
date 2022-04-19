@@ -11,8 +11,28 @@ router.get("/", async (req, res) => {
     LEFT JOIN years ON census_data.year_id = years.id ORDER BY countries.name ASC`,
     { type: QueryTypes.SELECT }
   );
+  const data = formatData(censusData);
   res.setHeader("Content-Type", "application/json");
-  res.json({ ...censusData });
+  res.json({ data });
 });
+function formatData(censusData) {
+  let returnData = [];
+  censusData.forEach((item, index) => {
+    let localObj = {};
+    let localData = [];
+    if (index == 0) {
+      localObj.name = censusData[0].name;
+      localData.push([censusData[0].year, censusData[0].population]);
+    } else if (item.name == censusData[index - 1].name) {
+      localData.push([item.year, item.population]);
+    } else if (item.name != censusData[index - 1].name) {
+      localObj.data = localData;
+      returnData.push(localObj);
+      localObj.name = item.name;
+      localData.push([item.year, item.population]);
+    }
+  });
+  return returnData;
+}
 
 module.exports = router;

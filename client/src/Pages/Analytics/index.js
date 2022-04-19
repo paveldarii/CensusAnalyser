@@ -6,7 +6,34 @@ class ApexChart extends React.Component {
     super(props);
 
     this.state = {
-      series: [
+      series: [],
+      options: {
+        chart: {
+          height: 350,
+          type: "scatter",
+          zoom: {
+            enabled: true,
+            type: "xy",
+          },
+        },
+        xaxis: {
+          tickAmount: 15,
+          labels: {
+            formatter: function (val) {
+              return parseInt(val);
+            },
+          },
+        },
+        yaxis: {
+          tickAmount: 7,
+        },
+      },
+    };
+  }
+  componentDidMount() {
+    axios.get("/api/census-data").then((res) => {
+      const series = res.data;
+      const dataTest = [
         {
           name: "US",
           data: [
@@ -115,35 +142,9 @@ class ApexChart extends React.Component {
             [16.4, 0],
           ],
         },
-      ],
-      options: {
-        chart: {
-          height: 350,
-          type: "scatter",
-          zoom: {
-            enabled: true,
-            type: "xy",
-          },
-        },
-        xaxis: {
-          tickAmount: 15,
-          labels: {
-            formatter: function (val) {
-              return parseInt(val);
-            },
-          },
-        },
-        yaxis: {
-          tickAmount: 7,
-        },
-      },
-    };
-  }
-  componentDidMount() {
-    axios.get("/api/census-data").then((res) => {
-      const series = res.data;
+      ];
 
-      this.setState({ series });
+      this.setState({ ...this.state, series: series.data });
     });
   }
   render() {
