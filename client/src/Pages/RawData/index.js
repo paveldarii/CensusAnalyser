@@ -7,68 +7,58 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-
-const columnNames = ["Year", "US", "Canada", "UK", "Moldova"];
-const allData = [
-  ["1...150", "N/A", "N/A", "N/A", "N/A"],
-  [151, "test", "test", "test", "test"],
-  [152, "test", "test", "test", "test"],
-  [153, "test", "test", "test", "test"],
-  [151, "test", "test", "test", "test"],
-  [152, "test", "test", "test", "test"],
-  [153, "test", "test", "test", "test"],
-  [151, "test", "test", "test", "test"],
-];
-const columns = columnNames.map((column) => {
-  return {
-    id: column.toLowerCase(),
-    label: column,
-    minWidth: 70,
-    align: "left",
-  };
-});
-
-function createData(row) {
-  var result = {};
-  row.forEach((key, i) => (result[columnNames[i].toLowerCase()] = key));
-  return result;
-}
-const rows = allData.map((row) => {
-  return createData(row);
-});
+import axios from "axios";
 
 export default function RawData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [columnNames, setColumnNames] = React.useState([]);
+  const [allData, setAllData] = React.useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+  React.useEffect(function () {
+    axios.get("/api/census-raw-data").then((res) => {
+      const { columnNames, data } = res.data;
+      setColumnNames(columnNames);
+      setAllData(data);
+    });
+  }, []);
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const columns = columnNames.map((column) => {
+    return {
+      id: column.toLowerCase(),
+      label: column,
+      minWidth: 70,
+      align: "left",
+    };
+  });
+
+  function createData(row) {
+    var result = {};
+    row.forEach((key, i) => (result[columnNames[i].toLowerCase()] = key));
+    return result;
+  }
+  const rows = allData.map((row) => {
+    return createData(row);
+  });
 
   return (
     <Paper sx={{ width: "100%" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 750 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
-            <TableRow>
-              <TableCell align="left" colSpan={1}>
-                Chronology
-              </TableCell>
-              <TableCell align="center" colSpan={5}>
-                Countries
-              </TableCell>
-            </TableRow>
             <TableRow>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ top: 57, minWidth: column.minWidth }}
+                  style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>

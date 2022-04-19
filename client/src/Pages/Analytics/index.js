@@ -33,7 +33,6 @@ class ApexChart extends React.Component {
   componentDidMount() {
     axios.get("/api/census-data").then((res) => {
       const series = res.data;
-
       this.setState({ ...this.state, series: series.data });
     });
   }
