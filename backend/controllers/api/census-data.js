@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
     `SELECT  countries.name, years.year, census_data.population
     FROM census_data
     LEFT JOIN countries ON census_data.country_id = countries.id
-    LEFT JOIN years ON census_data.year_id = years.id ORDER BY countries.name ASC`,
+    LEFT JOIN years ON census_data.year_id = years.id ORDER BY countries.name ASC Limit 1000`,
     { type: QueryTypes.SELECT }
   );
   const data = formateData(censusData);

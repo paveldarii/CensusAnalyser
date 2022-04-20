@@ -1,4 +1,5 @@
 import * as React from "react";
+import AnalyticsModal from "../../Components/AnalyticsModal";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 class ApexChart extends React.Component {
@@ -45,6 +46,7 @@ class ApexChart extends React.Component {
           type="scatter"
           height={750}
         />
+        <AnalyticsModal />
       </div>
     );
   }
