@@ -1,9 +1,7 @@
 const router = require("express").Router();
 
-const censusDataRoutes = require("./census-data.js");
-const censusRawDataRoutes = require("./census-raw-data.js");
+const censusRoutes = require("./census.js");
 
-router.use("/census-data", censusDataRoutes);
-router.use("/census-raw-data", censusRawDataRoutes);
+router.use("/census", censusRoutes);
 
 module.exports = router;

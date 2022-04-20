@@ -2,8 +2,16 @@ const router = require("express").Router();
 const { QueryTypes } = require("sequelize");
 const sequelize = require("../../config/connection");
 
-router.get("/", async (req, res) => {
-  //return all census data
+router.get("/countries", async (req, res) => {
+  //return all countries and their ids
+  const countries = await sequelize.query(`SELECT * from countries`, {
+    type: QueryTypes.SELECT,
+  });
+  res.json({ countries });
+});
+
+router.get("/analytics/scatter", async (req, res) => {
+  //return all census data formatted for scatter graph
   const censusData = await sequelize.query(
     `SELECT  countries.name, years.year, census_data.population
     FROM census_data
@@ -11,12 +19,21 @@ router.get("/", async (req, res) => {
     LEFT JOIN years ON census_data.year_id = years.id ORDER BY countries.name ASC Limit 1000`,
     { type: QueryTypes.SELECT }
   );
-  const data = formateData(censusData);
-  res.setHeader("Content-Type", "application/json");
+  const data = formateAnalyticsData(censusData);
   res.json({ data });
 });
 
-function formateData(censusData) {
+router.get("/analytics/raw", async (req, res) => {
+  //return all census data formatted for table
+  const censusData = await sequelize.query(
+    `SELECT  * FROM country_census_per_year`,
+    { type: QueryTypes.SELECT }
+  );
+  const data = formateRawData(censusData);
+  res.json({ columnNames, data });
+});
+
+function formateAnalyticsData(censusData) {
   let returnData = [];
   let localObj = {};
   let localData = [];
@@ -36,6 +53,22 @@ function formateData(censusData) {
     }
   });
   return returnData;
+}
+
+function formateRawData(censusData) {
+  var returnArray = [];
+  censusData.forEach((item) => {
+    var localArray = [];
+    Object.keys(item).map(function (key, index) {
+      if (!item[key]) {
+        localArray.push("N/A");
+      } else {
+        localArray.push(item[key].trim());
+      }
+    });
+    returnArray.push(localArray);
+  });
+  return returnArray;
 }
 
 module.exports = router;
