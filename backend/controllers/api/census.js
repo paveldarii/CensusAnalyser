@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const { QueryTypes } = require("sequelize");
+const { QueryTypes, where } = require("sequelize");
 const sequelize = require("../../config/connection");
+const columnNames = require("../../assets/countries");
 
 router.get("/countries", async (req, res) => {
   //return all countries and their ids
@@ -10,21 +11,38 @@ router.get("/countries", async (req, res) => {
   res.json({ countries });
 });
 
-router.get("/analytics/scatter", async (req, res) => {
+router.get("/analytics/scatter/:ids", async (req, res) => {
+  var idsArray = req.params.ids.split(",");
+  var whereStatement = ``;
+  idsArray.forEach((id) => {
+    let isNum = !isNaN(parseInt(id));
+    if (isNum && whereStatement == "") {
+      whereStatement += ` WHERE census_data.country_id = ${id} `;
+    } else if (isNum && whereStatement != "") {
+      whereStatement += ` or census_data.country_id = ${id} `;
+    }
+  });
+
+  if (whereStatement == "") {
+    res.json({});
+  }
+
   //return all census data formatted for scatter graph
   const censusData = await sequelize.query(
     `SELECT  countries.name, years.year, census_data.population
     FROM census_data
     LEFT JOIN countries ON census_data.country_id = countries.id
-    LEFT JOIN years ON census_data.year_id = years.id ORDER BY countries.name ASC Limit 1000`,
+    LEFT JOIN years ON census_data.year_id = years.id
+    ${whereStatement}
+    ORDER BY countries.name ASC`,
     { type: QueryTypes.SELECT }
   );
-  const data = formateAnalyticsData(censusData);
+  const data = formateAnalyticsScatterData(censusData);
   res.json({ data });
 });
 
 router.get("/analytics/raw", async (req, res) => {
-  //return all census data formatted for table
+  //return all countries and their ids
   const censusData = await sequelize.query(
     `SELECT  * FROM country_census_per_year`,
     { type: QueryTypes.SELECT }
@@ -33,25 +51,28 @@ router.get("/analytics/raw", async (req, res) => {
   res.json({ columnNames, data });
 });
 
-function formateAnalyticsData(censusData) {
+function formateAnalyticsScatterData(censusData) {
   let returnData = [];
   let localObj = {};
   let localData = [];
-  censusData.forEach((item, index) => {
-    if (index == 0) {
-      localObj.name = censusData[0].name;
-      localData.push([censusData[0].year, censusData[0].population]);
-    } else if (item.name == censusData[index - 1].name) {
-      localData.push([item.year, item.population]);
-    } else if (item.name != censusData[index - 1].name) {
-      localObj.data = localData;
-      returnData.push(localObj);
-      localObj = {};
-      localData = [];
-      localObj.name = item.name;
-      localData.push([item.year, item.population]);
+  for (let i = 0; i < censusData.length; i++) {
+    if (i == 0) {
+      localObj.name = censusData[i].name;
+      localData.push([censusData[i].year, censusData[i].population]);
+      continue;
+    } else if (censusData[i].name == censusData[i - 1].name) {
+      localData.push([censusData[i].year, censusData[i].population]);
+      if (i != censusData.length - 1) {
+        continue;
+      }
     }
-  });
+    localObj.data = localData;
+    returnData.push(localObj);
+    localObj = {};
+    localData = [];
+    localObj.name = censusData[i].name;
+    localData.push([censusData[i].year, censusData[i].population]);
+  }
   return returnData;
 }
 

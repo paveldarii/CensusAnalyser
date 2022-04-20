@@ -19,7 +19,7 @@ export default function RawData() {
     setPage(newPage);
   };
   React.useEffect(function () {
-    axios.get("/api/census-raw-data").then((res) => {
+    axios.get("/api/census/analytics/raw").then((res) => {
       const { columnNames, data } = res.data;
       setColumnNames(columnNames);
       setAllData(data);

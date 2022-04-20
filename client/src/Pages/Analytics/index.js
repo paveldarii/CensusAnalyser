@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AnalyticsModal from "../../Components/AnalyticsModal";
+import AnalyticsModal from "../../Components/SelectCountriesModal";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 export default function ApexChart(props) {
@@ -32,8 +32,8 @@ export default function ApexChart(props) {
   //   });
   // }, []);
 
-  const fetchSelectedCountries = () => {
-    axios.get("/api/census/analytics/scatter").then((res) => {
+  const fetchSelectedCountries = (ids) => {
+    axios.get(`/api/census/analytics/scatter/${ids}`).then((res) => {
       const series = res.data;
       setSeries(series.data);
     });
