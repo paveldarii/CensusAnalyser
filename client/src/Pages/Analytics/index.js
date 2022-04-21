@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AnalyticsModal from "../../Components/SelectCountriesModal";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
@@ -15,7 +15,7 @@ export default function ApexChart(props) {
     xaxis: {
       tickAmount: 15,
       labels: {
-        formatter: function (val) {
+        formatter: function(val) {
           return parseInt(val);
         },
       },
@@ -25,13 +25,6 @@ export default function ApexChart(props) {
     },
   });
   const [series, setSeries] = useState([]);
-  // useEffect(() => {
-  //   axios.get("/api/census-data").then((res) => {
-  //     const series = res.data;
-  //     setSeries(series.data);
-  //   });
-  // }, []);
-
   const fetchSelectedCountries = (ids) => {
     axios.get(`/api/census/analytics/scatter/${ids}`).then((res) => {
       const series = res.data;

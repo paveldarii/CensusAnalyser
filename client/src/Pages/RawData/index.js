@@ -1,101 +1,89 @@
-import * as React from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Table, Column, HeaderCell, Cell } from "rsuite-table";
+import MultiRangeSlider from "../../Components/MultiRangeSlider";
+import "rsuite-table/dist/css/rsuite-table.css";
 
-export default function RawData() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [columnNames, setColumnNames] = React.useState([]);
-  const [allData, setAllData] = React.useState([]);
+const dataList = [
+  { id: 1, name: "a", email: "a@email.com", avartar: "..." },
+  { id: 2, name: "b", email: "b@email.com", avartar: "..." },
+  { id: 3, name: "c", email: "c@email.com", avartar: "..." },
+];
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  React.useEffect(function () {
-    axios.get("/api/census/analytics/raw").then((res) => {
-      const { columnNames, data } = res.data;
-      setColumnNames(columnNames);
-      setAllData(data);
+const App = () => {
+  const maxYearRange = 200;
+  const [countries, setCountries] = useState([]);
+  const [years, setYears] = useState([]);
+  const [censusData, setCensusData] = useState([]);
+  const [errorColor, setErrorColor] = useState("black");
+  useEffect(() => {
+    axios.get("/api/census/countries").then((res) => {
+      setCountries(() => [...res.data.countries]);
+    });
+    axios.get("/api/census/years").then((res) => {
+      setYears(() => [...res.data.years]);
     });
   }, []);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  const handleYearChange = (min, max) => {
+    if (max - min > maxYearRange) {
+      setErrorColor("red");
+      let timeout = setTimeout(function() {
+        axios.get("/api/census/analytics/raw").then((res) => {
+          setCensusData(() => [...res.data.censusData]);
+          clearTimeout(timeout);
+        });
+      }, 3000);
+    } else {
+      setErrorColor("black");
+    }
   };
-  const columns = columnNames.map((column) => {
-    return {
-      id: column.toLowerCase(),
-      label: column,
-      minWidth: 70,
-      align: "left",
-    };
-  });
-
-  function createData(row) {
-    var result = {};
-    row.forEach((key, i) => (result[columnNames[i].toLowerCase()] = key));
-    return result;
-  }
-  const rows = allData.map((row) => {
-    return createData(row);
-  });
-
   return (
-    <Paper sx={{ width: "100%" }}>
-      <TableContainer sx={{ maxHeight: 750 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
+    <>
+      <div>
+        <Table
+          virtualized
+          height={700}
+          style={{ marginTop: "50px" }}
+          data={censusData}
+          bordered
+          cellBordered
+          affixHeader
+          affixHorizontalScrollbar
+        >
+          <Column width={70} fixed resizable>
+            <HeaderCell>Year</HeaderCell>
+            <Cell dataKey="Year" />
+          </Column>
+          {countries.map((country) => {
+            return (
+              <Column width={100} resizable key={country.name}>
+                <HeaderCell>{country.name}</HeaderCell>
+                <Cell dataKey={country.name} />
+              </Column>
+            );
+          })}
         </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+      </div>
+      <div
+        style={{
+          marginTop: "20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "right",
+        }}
+      >
+        <span className="px-3 pt-2" style={{ color: errorColor }}>
+          Select Max <b>{maxYearRange}</b> Years Range
+        </span>
+        <MultiRangeSlider
+          min={1}
+          max={2018}
+          onChange={({ min, max }) => handleYearChange(min, max)}
+        />
+      </div>
+    </>
   );
-}
+};
+
+export default App;
