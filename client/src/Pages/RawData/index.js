@@ -20,22 +20,21 @@ const App = () => {
     axios.get("/api/census/countries").then((res) => {
       setCountries(() => [...res.data.countries]);
     });
-    axios.get("/api/census/years").then((res) => {
-      setYears(() => [...res.data.years]);
-    });
   }, []);
 
-  const handleYearChange = (min, max) => {
-    if (max - min > maxYearRange) {
-      setErrorColor("red");
-      let timeout = setTimeout(function() {
-        axios.get("/api/census/analytics/raw").then((res) => {
+  const handleRangeChange = (min, max) => {
+    let timeout;
+    if (max - min < maxYearRange) {
+      clearTimeout(timeout);
+      setErrorColor("black");
+      timeout = setTimeout(function() {
+        axios.get(`/api/census/analytics/raw/${min},${max}`).then((res) => {
           setCensusData(() => [...res.data.censusData]);
           clearTimeout(timeout);
         });
       }, 3000);
     } else {
-      setErrorColor("black");
+      setErrorColor("red");
     }
   };
   return (
@@ -68,18 +67,16 @@ const App = () => {
       <div
         style={{
           marginTop: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "right",
+          float: "right",
         }}
       >
-        <span className="px-3 pt-2" style={{ color: errorColor }}>
+        <span className="p-3" style={{ color: errorColor }}>
           Select Max <b>{maxYearRange}</b> Years Range
         </span>
         <MultiRangeSlider
           min={1}
           max={2018}
-          onChange={({ min, max }) => handleYearChange(min, max)}
+          handleRangeChange={handleRangeChange}
         />
       </div>
     </>

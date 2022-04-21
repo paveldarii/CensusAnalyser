@@ -41,14 +41,56 @@ router.get("/analytics/scatter/:ids", async (req, res) => {
   res.json({ data });
 });
 
-router.get("/analytics/raw", async (req, res) => {
+router.get("/analytics/raw/:range", async (req, res) => {
+  var yearRange = req.params.range.split(",");
+  let min = parseInt(yearRange[0]);
+  let max = parseInt(yearRange[1]);
+  let limit = 200;
+  if (max - min < 200) {
+    limit = max - min + 1;
+  }
+  var clauseStatement = ``;
+  if (!isNaN(min) || !isNaN(max)) {
+    clauseStatement = `WHERE year BETWEEN ${min} AND ${max} Limit ${limit}`;
+  } else {
+    clauseStatement = `LIMIT 100`;
+  }
+
   //return all countries and their ids
   const censusData = await sequelize.query(
-    `SELECT  * FROM country_census_per_year`,
+    `SELECT  * FROM country_census_per_year ${clauseStatement}`,
     { type: QueryTypes.SELECT }
   );
   const data = formateRawData(censusData);
-  res.json({ columnNames, data });
+  res.json({ censusData });
+});
+
+router.get("/years", async (req, res) => {
+  //return all countries and their ids
+  const years = await sequelize.query(`SELECT year FROM years LIMIT 20`, {
+    type: QueryTypes.SELECT,
+  });
+
+  res.json({ years });
+});
+
+router.get("/analytics/raw/range", async (req, res) => {
+  //return all countries and their ids
+  const censusData = await sequelize.query(
+    `SELECT  * FROM country_census_per_year Limit 200`,
+    { type: QueryTypes.SELECT }
+  );
+  const data = formateRawData(censusData);
+  res.json({ censusData });
+});
+
+router.get("/years", async (req, res) => {
+  //return all countries and their ids
+  const years = await sequelize.query(`SELECT year FROM years LIMIT 20`, {
+    type: QueryTypes.SELECT,
+  });
+
+  res.json({ years });
 });
 
 function formateAnalyticsScatterData(censusData) {
