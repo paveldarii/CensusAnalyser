@@ -3,7 +3,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import "./index.css";
 
-const MultiRangeSlider = ({ min, max, handleRangeChange }) => {
+const MultiRangeSlider = ({ min, max, handleRangeChange, initMin }) => {
   const [minVal, setMinVal] = useState(min);
   const [maxVal, setMaxVal] = useState(max);
   const range = useRef(null);
@@ -13,17 +13,15 @@ const MultiRangeSlider = ({ min, max, handleRangeChange }) => {
     (value) => Math.round(((value - min) / (max - min)) * 100),
     [min, max]
   );
-
+  useEffect(() => {
+    setMinVal(initMin);
+  }, []);
   // Get min and max values when their state changes
   useEffect(() => {
     range.current.style.left = `${getPercent(minVal)}%`;
     range.current.style.width = `${getPercent(maxVal) - getPercent(minVal)}%`;
     handleRangeChange(minVal, maxVal);
   }, [minVal, maxVal]);
-
-  useEffect(() => {
-    setMinVal(1850);
-  }, []);
 
   return (
     <div className="container">

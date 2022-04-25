@@ -45,13 +45,13 @@ router.get("/analytics/raw/:range", async (req, res) => {
   var yearRange = req.params.range.split(",");
   let min = parseInt(yearRange[0]);
   let max = parseInt(yearRange[1]);
-  let limit = 200;
+  let limit = 1000;
   if (max - min < 200) {
     limit = max - min + 1;
   }
   var clauseStatement = ``;
   if (!isNaN(min) || !isNaN(max)) {
-    clauseStatement = `WHERE year BETWEEN ${min} AND ${max} Limit ${limit}`;
+    clauseStatement = `WHERE year BETWEEN ${min} AND ${max}`;
   } else {
     clauseStatement = `LIMIT 100`;
   }
@@ -74,10 +74,10 @@ router.get("/years", async (req, res) => {
   res.json({ years });
 });
 
-router.get("/analytics/raw/range", async (req, res) => {
+router.get("/analytics/raw/", async (req, res) => {
   //return all countries and their ids
   const censusData = await sequelize.query(
-    `SELECT  * FROM country_census_per_year Limit 200`,
+    `SELECT  * FROM country_census_per_year`,
     { type: QueryTypes.SELECT }
   );
   const data = formateRawData(censusData);

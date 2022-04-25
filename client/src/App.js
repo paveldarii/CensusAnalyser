@@ -1,24 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
+import { MDBContainer } from "mdb-react-ui-kit";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+//components
 import Nav from "./Components/Nav";
-import Page from "./Components/Page";
+
+//pages
+import AnalyticsTable from "./Pages/AnalyticsTable";
+import AnalyticsScatter from "./Pages/AnalyticsScatter";
+import Home from "./Pages/Home";
 
 function App() {
-  const [pages] = useState([
-    {
-      name: "raw data",
-      value: 0,
-    },
-    { name: "analytics", value: 1 },
-  ]);
-  const [currentPage, setCurrentPage] = useState(pages[0]);
   return (
     <div>
-      <Nav
-        pages={pages}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-      />
-      <Page currentPage={currentPage} />
+      <Router>
+        <Nav />
+        <MDBContainer className="mt-4">
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/analytics/table" element={<AnalyticsTable />} />
+            <Route
+              exact
+              path="/analytics/scatter"
+              element={<AnalyticsScatter />}
+            />
+            <Route element={<Home />} />
+          </Routes>
+        </MDBContainer>
+      </Router>
     </div>
   );
 }
