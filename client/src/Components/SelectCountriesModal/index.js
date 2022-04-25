@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+
 import {
   MDBBtn,
   MDBModal,
@@ -12,19 +12,18 @@ import {
   MDBCheckbox,
 } from "mdb-react-ui-kit";
 
-export default function SelectCountriesModal(props) {
+export default function SelectCountriesModal({
+  fetchSelectedCountries,
+  countries,
+}) {
   const [basicModal, setBasicModal] = useState(true);
-  const [countries, setCountries] = useState([]);
+
   const [selectedCountries, setSelectedCountries] = useState([]);
   const toggleShow = () => setBasicModal(!basicModal);
-  useEffect(() => {
-    axios.get("/api/census/countries").then((res) => {
-      setCountries(() => [...res.data.countries]);
-    });
-  }, []);
+
   const handleCompareSelected = (data) => {
     setBasicModal(false);
-    props.fetchSelectedCountries(data.join(","));
+    fetchSelectedCountries(data.join(","));
   };
   const handleCheckboxChange = (isChecked, country_id) => {
     if (isChecked) {
@@ -33,7 +32,7 @@ export default function SelectCountriesModal(props) {
       });
     } else {
       setSelectedCountries((prev) => {
-        return prev.filter(function (id) {
+        return prev.filter(function(id) {
           return id !== country_id;
         });
       });

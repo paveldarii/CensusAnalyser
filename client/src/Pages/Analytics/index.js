@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AnalyticsModal from "../../Components/SelectCountriesModal";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
-export default function AnalyticsScatter() {
+export default function AnalyticsScatter({ countries }) {
   const [options] = useState({
     chart: {
       height: "100%",
@@ -40,7 +40,10 @@ export default function AnalyticsScatter() {
         type="scatter"
         height={750}
       />
-      <AnalyticsModal fetchSelectedCountries={fetchSelectedCountries} />
+      <AnalyticsModal
+        fetchSelectedCountries={fetchSelectedCountries}
+        countries={countries}
+      />
     </div>
   );
 }

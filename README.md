@@ -12,15 +12,15 @@ https://census-analytics.herokuapp.com/
 
 ### Root > `npm run develop`
 
-### The database info is hardcoded (not good practice!) in the codebase, so anyone can access the database locally when testing
+### The database credentials are hardcoded (not good practice!) in the codebase, so anyone can access the database locally when testing
 
-## General Notes
+## About app
 
-### There is still work to be done on performance since the libraries used here might not be the best fit for large amount of data. Also, to improve performance, for example on Analytics page, we might need to initially give a person the option to choose which countries to compare so it does not load all over 160 countries in the same time.
+### Census Scatter Graph
 
 ![Analitics Page](/assets/analytics.png)
 
-### The same thing applies to Raw Data page. Also, on this page I would add sorting option and search option, so it can be easy to find the right thing.
+### Census Table
 
 ![Raw Data Page](/assets/raw-data.png)
 

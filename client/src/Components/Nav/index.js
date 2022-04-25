@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMatch } from "react-router-dom";
 import {
   MDBContainer,
@@ -12,7 +12,6 @@ import {
   MDBDropdown,
   MDBDropdownToggle,
   MDBDropdownMenu,
-  MDBDropdownItem,
   MDBDropdownLink,
   MDBCollapse,
 } from "mdb-react-ui-kit";
@@ -27,22 +26,26 @@ function Nav() {
     path: "/analytics/scatter",
     exact: true,
   });
+  const [showBasic, setShowBasic] = useState(false);
   return (
     <MDBNavbar expand="lg" light bgColor="light">
       <MDBContainer fluid>
         <MDBNavbarBrand href="/">
-          <span className="text-primary">Census</span>Analytics
+          <strong>
+            <span className="text-primary">Census</span>Analytics
+          </strong>
         </MDBNavbarBrand>
 
         <MDBNavbarToggler
           aria-controls="navbarSupportedContent"
           aria-expanded="false"
           aria-label="Toggle navigation"
+          onClick={() => setShowBasic(!showBasic)}
         >
-          <MDBIcon icon="bars" fas />
+          <MDBIcon icon="bars" className="fas" />
         </MDBNavbarToggler>
 
-        <MDBCollapse navbar>
+        <MDBCollapse navbar show={showBasic}>
           <MDBNavbarNav className="mr-auto mb-2 mb-lg-0">
             <MDBNavbarItem>
               <MDBNavbarLink
