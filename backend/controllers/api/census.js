@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { QueryTypes, where } = require("sequelize");
 const sequelize = require("../../config/connection");
-const columnNames = require("../../assets/countries");
 
 router.get("/countries", async (req, res) => {
   //return all countries and their ids
