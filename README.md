@@ -12,7 +12,7 @@ https://census-analytics.herokuapp.com/
 
 ### Root > `npm run develop`
 
-### The database credentials are hardcoded (not good practice!) in the codebase, so anyone can access the database locally when testing
+### Root > backend > create a .env file based on .env.example file structure
 
 ## About app
 
